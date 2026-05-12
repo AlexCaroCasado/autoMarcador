@@ -336,28 +336,64 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('output_quality', els.resolutionSelect.value);
 
             // Enviar AJAX
+// Enviar AJAX
             const xhr = new XMLHttpRequest();
             xhr.open('POST', '/render', true);
             xhr.responseType = 'blob'; 
 
+            let renderInterval = null; // Variable para nuestro temporizador de progreso
+
             xhr.upload.onprogress = function(e) {
                 if (e.lengthComputable) {
                     const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    
                     if (percentComplete < 100) {
+                        // 1. FASE DE SUBIDA (0% a 100% real de los archivos)
                         els.progressBar.style.width = percentComplete + "%";
                         els.progressText.innerText = percentComplete + "%";
                         els.progressStatus.innerText = "Subiendo archivos...";
                     } else {
-                        els.progressStatus.innerText = "🎥 Renderizando... No cierres la ventana.";
-                        els.progressText.innerText = "";
-                        requestAnimationFrame(() => {
-                            els.progressBar.classList.add('processing');
-                        });
+                        // 2. FASE DE RENDERIZADO (El progreso simulado inteligente)
+                        if (!renderInterval) {
+                            els.progressBar.style.width = "0%"; // Reiniciamos la barra
+                            els.progressText.innerText = "0%";
+                            els.progressStatus.innerText = "🎥 Procesando video...";
+                            
+                            // Calculamos cuánto va a tardar según la calidad elegida
+                            const qualityFactors = { "1080": 0.6, "720": 0.4, "480": 0.25 };
+                            const factor = qualityFactors[els.resolutionSelect.value] || 0.6;
+                            let estimatedSecs = videoDurationSeconds * factor;
+                            
+                            // Si por algún motivo no hay tiempo, ponemos 30 seg por defecto
+                            if (estimatedSecs <= 0 || isNaN(estimatedSecs)) estimatedSecs = 30; 
+
+                            let currentFakeProgress = 0;
+                            const maxFakeProgress = 95; // Paramos en 95% hasta que termine de verdad
+                            
+                            // Calculamos cuánto tiene que avanzar la barra cada segundo
+                            const stepPerSecond = maxFakeProgress / estimatedSecs;
+
+                            renderInterval = setInterval(() => {
+                                currentFakeProgress += stepPerSecond;
+                                
+                                if (currentFakeProgress >= maxFakeProgress) {
+                                    currentFakeProgress = maxFakeProgress;
+                                    clearInterval(renderInterval);
+                                    els.progressStatus.innerText = "⏳ Finalizando detalles...";
+                                }
+                                
+                                els.progressBar.style.width = currentFakeProgress + "%";
+                                els.progressText.innerText = Math.round(currentFakeProgress) + "%";
+                            }, 1000); // Se actualiza cada 1 segundo (1000 ms)
+                        }
                     }
                 }
             };
 
             xhr.onload = function() {
+                // Detenemos la animación falsa de progreso
+                if (renderInterval) clearInterval(renderInterval);
+                
                 if (xhr.status === 200) {
                     const blob = xhr.response;
                     const url = window.URL.createObjectURL(blob);
@@ -369,9 +405,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     a.remove();
                     window.URL.revokeObjectURL(url);
                     
+                    // 3. FASE DE COMPLETADO (Forzamos al 100%)
                     els.progressStatus.innerText = "✅ ¡Listo!";
                     els.progressBar.classList.remove('processing');
                     els.progressBar.style.width = "100%";
+                    els.progressText.innerText = "100%";
                     showToast("Renderizado completado con éxito", "success");
                 } else {
                     showToast(`Error del servidor (${xhr.status})`, "error");
@@ -382,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             xhr.onerror = function() {
+                if (renderInterval) clearInterval(renderInterval);
                 showToast("Error de conexión", "error");
                 resetButton();
             };

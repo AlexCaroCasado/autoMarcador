@@ -74,8 +74,8 @@ def parse_events(file_content: str, start_minute: int = 0, initial_local: int = 
                 local_score += 1
             
             clean_name = raw_desc
-            words_to_remove = ["Gol", "gol", "GOL", "(v)", "(V)", "visitante", "local", "de", "-", ":"]
-            
+            words_to_remove = ["Gol", "gol", "GOL", "(v)", "(V)", "(l)", "(L)", "visitante", "local", "de", "-", ":"]     
+                   
             for w in words_to_remove:
                 clean_name = clean_name.replace(f" {w} ", " ")
                 clean_name = clean_name.replace(f"{w} ", " ")

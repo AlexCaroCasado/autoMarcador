@@ -1,27 +1,26 @@
-# 1. Usar una imagen base de Python ligera (Linux)
+# Usar una imagen base de Python
 FROM python:3.9-slim
 
-# 2. Establecer el directorio de trabajo dentro del contenedor
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# 3. INSTALAR FFMPEG (La magia de Docker)
-# Esto instala FFmpeg dentro del contenedor automáticamente
+# INSTALAR FFMPEG 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     apt-get clean
 
-# 4. Copiar los archivos de requisitos e instalarlos
+# Copiar los archivos de requisitos e instalarlos
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copiar el resto del código de tu proyecto
+# Copiar el resto del código de tu proyecto
 COPY . .
 
-# 6. Crear carpetas necesarias (para evitar errores si no existen)
+# Crear carpetas necesarias
 RUN mkdir -p uploads outputs
 
-# 7. Exponer el puerto (FastAPI usa el 8000 por defecto)
+# Exponer el puerto
 EXPOSE 8000
 
-# 8. Comando para iniciar la aplicación
+# Comando para iniciar la aplicación
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

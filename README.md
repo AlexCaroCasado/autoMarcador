@@ -1,73 +1,99 @@
-# AutoMarcador Studio ⚽
+# AutoMarcador Studio
 
-Generador automático de resúmenes de partidos con marcadores deportivos superpuestos.
+Generador automático de resúmenes de partidos con marcadores deportivos superpuestos (VOD). Convierte vídeos crudos de partidos de fútbol base, sala o amateur en resúmenes profesionales en un par de clics, utilizando Python, FastAPI y FFmpeg.
 
-## 📋 Requisitos Previos
+## Características
 
-Para ejecutar este proyecto, necesitas tener instalado:
+* **Automatización Total:** Olvídate de editores de vídeo complejos. Sube tu vídeo, adjunta los datos y el servidor hace el resto.
+* **Personalización Completa:** Cambia los nombres, escudos (PNG), colores principales y el diseño de la insignia directamente desde una interfaz web moderna.
+* **Sincronización Inteligente:** Soporte nativo para segundas partes o prórrogas. Configura en qué minuto y con qué resultado empieza el vídeo.
+* **Barra de progreso en tiempo real:** Interfaz responsiva que simula el tiempo estimado de renderizado según la calidad de salida (1080p, 720p, 480p).
 
-1.  **Python 3.9+**
-2.  **FFmpeg**: Es el motor que procesa el video.
+---
 
-### 🛠️ Cómo instalar FFmpeg
+## Requisitos Previos
 
-* **Windows:** Descarga el ejecutable desde [ffmpeg.org](https://ffmpeg.org/download.html), extrae el archivo y añade la carpeta `bin` a tus Variables de Entorno (PATH).
-* **Mac:** `brew install ffmpeg`
-* **Linux:** `sudo apt install ffmpeg`
+Para ejecutar este proyecto de forma local, necesitas tener instalado:
 
-## 🚀 Instalación del Proyecto
+1. **Python 3.9+**
+2. **FFmpeg** (El motor de procesamiento de vídeo).
 
-1.  Clona el repositorio:
-    ```bash
-    git clone [https://github.com/tu-usuario/automarcador.git](https://github.com/tu-usuario/automarcador.git)
-    ```
-2.  Instala las dependencias de Python:
-    ```bash
-    pip install -r requirements.txt
-    ```
-3.  Ejecuta el servidor:
-    ```bash
-    uvicorn main:app --reload
-    ```
+### Instalación de FFmpeg
 
-## ⚖️ Licencia y Créditos
+**Windows:**
+1. Ve a [ffmpeg.org](https://www.gyan.dev/ffmpeg/builds/) y descarga la versión *release-essentials* (archivo .zip).
+2. Extrae la carpeta y renómbrala a `ffmpeg`. Muévela a tu disco local (Ej: `C:\ffmpeg`).
+3. Busca en Windows *"Editar las variables de entorno del sistema"*.
+4. En "Variables del sistema", busca **Path** -> Editar -> Nuevo. Añade la ruta a la carpeta bin: `C:\ffmpeg\bin`.
+5. Abre una terminal nueva y escribe `ffmpeg -version` para comprobar que funciona.
+
+**Mac / Linux:**
+* Mac: `brew install ffmpeg`
+* Linux: `sudo apt install ffmpeg`
+
+---
+
+## Instalación del Proyecto
+
+### Opción A: Entorno Local (Python)
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/AlexCaroCasado/autoMarcador.git
+   cd automarcador
+
+```
+
+2. Instala las dependencias:
+```bash
+pip install -r requirements.txt
+
+```
+
+
+3. Ejecuta el servidor:
+```bash
+uvicorn main:app --reload
+
+```
+
+
+4. Abre tu navegador en `http://localhost:8000`
+
+### Opción B: Ejecución con Docker
+
+Si no quieres instalar FFmpeg manualmente, levanta el entorno con Docker:
+
+```bash
+docker build -t automarcador .
+docker run -p 8000:8000 automarcador
+
+```
+
+---
+
+## Cómo usar la herramienta
+
+Para que el programa dibuje los goles en el momento exacto, debes crear un archivo de texto (`.txt`) con los eventos del partido.
+
+El formato debe ser exactamente este por cada línea:
+`[Minuto:Segundo] Gol [Equipo (L) o (V)] [Nombre del Jugador]`
+
+**Ejemplo de archivo de texto:**
+
+```text
+01:04 Gol (V) Angel
+07:41 Gol (L) Grostar
+12:53 Gol (L) Pakito
+34:30 Gol (V) Angel
+
+```
+
+1. Sube tu vídeo `.mp4`.
+2. Sube tu archivo `.txt`.
+3. Ajusta los colores y logos en "Personalización".
+4. ¡Pulsa renderizar y descarga tu resumen!
+
+
+## Licencia y Créditos
 
 Este proyecto utiliza **FFmpeg** bajo la licencia LGPLv2.1. FFmpeg es una marca registrada de Fabrice Bellard. Este proyecto no está asociado oficialmente con el proyecto FFmpeg.
-
-## ⚙️ Configuración de FFmpeg (Obligatorio)
-
-Este proyecto requiere FFmpeg para procesar los videos. El programa no se incluye en este repositorio y debe instalarse manualmente.
-
-### 🟡 Windows
-
-1.  **Descargar:** Ve a [ffmpeg.org](https://www.gyan.dev/ffmpeg/builds/) y descarga la versión *git-full* o *release-essentials* (archivo .7z o .zip).
-2.  **Descomprimir:** Extrae la carpeta y renómbrala a `ffmpeg`. Muévela a una ubicación segura, por ejemplo: `C:\ffmpeg`.
-3.  **Configurar Variables de Entorno (PATH):**
-    * En el buscador de Windows escribe: *"Editar las variables de entorno del sistema"*.
-    * Haz clic en el botón **"Variables de entorno..."**.
-    * En el apartado "Variables del sistema" (abajo), busca la variable llamada **Path** y haz doble clic o "Editar".
-    * Haz clic en "Nuevo" y pega la ruta de la carpeta `bin` que está dentro de lo que descargaste.
-        * Ejemplo: `C:\ffmpeg\bin`
-    * Acepta todas las ventanas.
-4.  **Verificar:** Abre una nueva terminal (CMD o PowerShell) y escribe `ffmpeg -version`. Si salen letras y números, ¡ya está listo!
-
-### 🟢 Mac / Linux
-
-* **Mac:** Ejecuta `brew install ffmpeg` en la terminal.
-* **Linux:** Ejecuta `sudo apt install ffmpeg` en la terminal.
-
-## 🐳 Ejecución con Docker (Opción Rápida)
-
-Si no quieres instalar FFmpeg manualmente en tu sistema, puedes usar Docker.
-
-1.  **Construir la imagen:**
-    ```bash
-    docker build -t automarcador .
-    ```
-
-2.  **Ejecutar el contenedor:**
-    ```bash
-    docker run -p 8000:8000 automarcador
-    ```
-
-3.  Abre tu navegador en `http://localhost:8000`

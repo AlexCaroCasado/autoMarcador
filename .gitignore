@@ -5,7 +5,7 @@ venv/
 .env
 .DS_Store
 
-# Archivos multimedia pesados (No subir a GitHub)
+# Archivos multimedia pesados 
 *.mp4
 *.avi
 *.mov
@@ -15,7 +15,7 @@ uploads/
 outputs/
 temp/
 
-# Binarios (No subir ffmpeg.exe, Render lo instalará solo)
+# Binarios
 *.exe
 *.dll
 ffmpeg.exe

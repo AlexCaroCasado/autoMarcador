@@ -19,6 +19,12 @@ Para ejecutar este proyecto de forma local, necesitas tener instalado:
 
 ## 🚀 Instalación del Proyecto
 
+1. Clonar el repositorio:
+```bash
+git clone https://github.com/AlexCaroCasado/autoMarcador.git
+cd autoMarcador
+```
+
 ### Opción A: Ejecución con Docker (Recomendada)
 
 Esta es la vía más rápida y segura, ya que el contenedor incluye FFmpeg preinstalado y configurado automáticamente.
@@ -32,23 +38,17 @@ docker run -p 8000:8000 automarcador
 
 Nota: Si utilizas esta opción, debes asegurarte de tener FFmpeg instalado manualmente en tu sistema y añadido a las Variables de Entorno (PATH).
 
-1. Clona el repositorio:
-```bash
-git clone https://github.com/AlexCaroCasado/autoMarcador.git
-cd autoMarcador
-```
-
-2. Instala las dependencias:
+1. Instala las dependencias:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Ejecuta el servidor:
+2. Ejecuta el servidor:
 ```bash
 uvicorn main:app --reload
 ```
 
-4. Abre tu navegador en `http://localhost:8000`
+3. Abre tu navegador en `http://localhost:8000`
 
 ---
 

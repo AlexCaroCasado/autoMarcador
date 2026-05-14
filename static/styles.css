@@ -1,19 +1,5 @@
-/* ==========================================================================
-   ÍNDICE DE CONTENIDOS
-   ==========================================================================
-   1. VARIABLES & CONFIGURACIÓN (:root)
-   2. BASE & SCROLLBAR (Body, Reset)
-   3. LAYOUT PRINCIPAL (Grid, Sidebar, Main)
-   4. COMPONENTES UI (Botones, Inputs, Badges)
-   5. REPRODUCTOR DE VIDEO
-   6. MARCADOR / TV OVERLAY (Cajas, Logos, Franjas)
-   7. MODAL DE CONFIGURACIÓN (Formularios, Grid)
-   8. FEEDBACK VISUAL (Barra de Progreso, Toasts, Tooltips, Validaciones)
-   9. UTILIDADES
-   ========================================================================== */
-
 /* =========================================
-   1. VARIABLES & CONFIGURACIÓN
+   1. VARIABLES Y CONFIGURACIÓN
    ========================================= */
 :root {
   /* Colores de Interfaz */
@@ -24,9 +10,9 @@
   --text-main: #ffffff;
   
   /* Configuración Marcador */
-  --strip-radius: 0px; /* 0px para esquinas cuadradas */
+  --strip-radius: 0px; 
   
-  /* Variables Dinámicas (Modificadas por JS) */
+  /* Variables Dinámicas*/
   --sb-bg-main: #1E90FF;  /* Fondo cajas equipos */
   --sb-bg-info: #ffffff;  /* Fondo tiempo/goles/liga */
   --sb-text: #000000;     /* Color texto */
@@ -36,7 +22,7 @@
 }
 
 /* =========================================
-   2. BASE & SCROLLBAR
+   2. BASE Y SCROLLBAR
    ========================================= */
 body {
   margin: 0; 
@@ -47,7 +33,6 @@ body {
   overflow: hidden;
 }
 
-/* Scrollbar Personalizado */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: #1e1e1e; }
 ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
@@ -83,9 +68,8 @@ body {
 .badge { background: #ff0055; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
 
 /* =========================================
-   4. COMPONENTES UI (Inputs y Botones)
+   4. COMPONENTES UI
    ========================================= */
-/* Inputs de Archivo ocultos */
 input[type="file"] { display: none; }
 
 /* Botones de subida personalizados */
@@ -110,7 +94,7 @@ input[type="file"] { display: none; }
 }
 .btn-secondary:hover { background: #555; }
 
-/* Botón eliminar imagen (pequeño rojo) */
+/* Botón eliminar imagen*/
 .btn-delete-img { 
     background: #442222; color: #ff5555; border: 1px solid #663333; 
     border-radius: 6px; padding: 8px 12px; cursor: pointer; font-weight: bold; 
@@ -139,7 +123,7 @@ video { width: 100%; height: 100%; object-fit: contain; }
     position: absolute;
     top: 30px; left: 30px;
     height: 36px;
-    width: 360px; /* Ancho estándar con Liga */
+    width: 360px; 
     font-family: 'Inter', sans-serif;
     pointer-events: none;
     z-index: 10;
@@ -203,7 +187,6 @@ video { width: 100%; height: 100%; object-fit: contain; }
 /* --- MODO COMPACTO (SIN LIGA) --- */
 .tv-overlay.no-liga { width: 320px; }
 .tv-overlay.no-liga .box-liga { display: none; }
-/* Recalculo de posiciones (-40px) */
 .tv-overlay.no-liga .box-time  { left: 0px; }
 .tv-overlay.no-liga .box-local { left: 60px; }
 .tv-overlay.no-liga .box-score { left: 160px; }
@@ -239,14 +222,13 @@ video { width: 100%; height: 100%; object-fit: contain; }
 .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .full-width { grid-column: span 2; }
 
-/* Ajustes de Espaciado (Solicitados) */
 fieldset { 
     border: 1px solid #444; border-radius: 6px; padding: 15px; 
-    margin-bottom: 15px; /* Separación entre bloques */
+    margin-bottom: 15px; 
 }
 legend { color: #aaa; font-size: 0.9rem; font-weight: bold; padding: 0 5px; }
 
-.input-group { margin-bottom: 10px; /* Separación entre inputs */ }
+.input-group { margin-bottom: 10px; }
 .input-group:last-child { margin-bottom: 0; }
 
 /* Estilos de Inputs */
@@ -261,7 +243,7 @@ legend { color: #aaa; font-size: 0.9rem; font-weight: bold; padding: 0 5px; }
    8. FEEDBACK VISUAL
    ========================================= */
 
-/* --- A. Barra de Progreso --- */
+/* --- Barra de Progreso --- */
 .progress-container {
     margin-top: 15px; background: #252525; padding: 10px; 
     border-radius: 6px; border: 1px solid #333;
@@ -278,7 +260,6 @@ legend { color: #aaa; font-size: 0.9rem; font-weight: bold; padding: 0 5px; }
     height: 100%; width: 0%; background: var(--primary); 
     border-radius: 4px; transition: width 0.2s ease;
 }
-/* Animación "Procesando" */
 .progress-fill.processing {
     background-color: var(--primary);
     background-image: linear-gradient(
@@ -298,7 +279,7 @@ legend { color: #aaa; font-size: 0.9rem; font-weight: bold; padding: 0 5px; }
     text-align: right; font-style: italic;
 }
 
-/* --- B. Notificaciones (Toasts) --- */
+/* --- Notificaciones --- */
 .toast-container {
     position: fixed; top: 20px; right: 20px; 
     display: flex; flex-direction: column; gap: 10px; z-index: 9999;
@@ -323,7 +304,7 @@ legend { color: #aaa; font-size: 0.9rem; font-weight: bold; padding: 0 5px; }
     to { opacity: 0; pointer-events: none; }
 }
 
-/* --- C. Tooltips (Ayuda Visual) --- */
+/* --- Tooltips --- */
 .tooltip {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; background-color: #444; color: #ccc;
@@ -344,7 +325,7 @@ legend { color: #aaa; font-size: 0.9rem; font-weight: bold; padding: 0 5px; }
     border-color: rgba(0,0,0,0.9) transparent transparent transparent;
 }
 
-/* --- D. Validación de Inputs (Sacudida) --- */
+/* --- Validación de Inputs --- */
 .input-error {
     border-color: #ff4444 !important;
     animation: shake 0.4s ease-in-out;

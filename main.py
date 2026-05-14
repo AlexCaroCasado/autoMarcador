@@ -23,7 +23,7 @@ async def read_root():
     return FileResponse("static/index.html")
 
 # ---------------------------------------------------------
-# 2. PARSEO DE EVENTOS (CON SINCRONIZACIÓN DE SEGUNDAS PARTES)
+# PARSEO DE EVENTOS
 # ---------------------------------------------------------
 def parse_events(file_content: str, start_minute: int = 0, initial_local: int = 0, initial_visit: int = 0):
     events = []
@@ -49,16 +49,13 @@ def parse_events(file_content: str, start_minute: int = 0, initial_local: int = 
         try:
             mm, ss = map(int, time_str.split(':'))
             
-            # Calculamos el segundo ABSOLUTO del partido
             absolute_seconds = mm * 60 + ss
             
-            # Calculamos el segundo RELATIVO al video subido
             video_seconds = absolute_seconds - offset_seconds
             
             short_minute = f"{mm}'"
             
-            # Si el evento pasó antes del video (ej: gol en min 10, pero subes la segunda parte)
-            # no se dibuja animación en el video nuevo, simplemente se cuenta en el inicial_score.
+
             if video_seconds < 0:
                 continue 
                 
@@ -99,7 +96,7 @@ def parse_events(file_content: str, start_minute: int = 0, initial_local: int = 
     return events
 
 # ---------------------------------------------------------
-# 3. LIMPIEZA DE ARCHIVOS
+# LIMPIEZA DE ARCHIVOS
 # ---------------------------------------------------------
 def cleanup_files(file_paths: List[str]):
     for path in file_paths:
@@ -111,7 +108,7 @@ def cleanup_files(file_paths: List[str]):
             print(f"⚠️ Error eliminando {path}: {e}")
 
 # ---------------------------------------------------------
-# 4. ENDPOINT DE RENDERIZADO
+# ENDPOINT DE RENDERIZADO
 # ---------------------------------------------------------
 @app.post("/render")
 async def render_video(
@@ -180,7 +177,7 @@ async def render_video(
 
         events_content = (await events.read()).decode("utf-8")
         
-        # Le pasamos los datos iniciales al parser
+        # Pasar los datos iniciales al parser
         match_events = parse_events(events_content, start_minute, start_score_local, start_score_visit)
 
         config = {

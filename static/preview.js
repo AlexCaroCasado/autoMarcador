@@ -2,14 +2,13 @@ console.log("✅ preview.js cargado (Versión Final: Preview Sincronizada en Viv
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. REFERENCIAS DOM ---
     const els = {
         // Contenedores
         scoreboardOverlay: document.getElementById('scoreboardOverlay'),
         videoPlayer: document.getElementById('video'),
         chkShowLiga: document.getElementById('chkShowLiga'),
 
-        // Textos e Inputs (Añadimos los de inicio)
+        // Textos e Inputs
         localName: document.getElementById('local'),
         visitName: document.getElementById('visitor'),
         localNameInput: document.getElementById('inputLocalName'),
@@ -19,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewScore: document.getElementById('score'),
         previewTime: document.getElementById('time'),
         
-        // Inputs de Inicio (Minutos y Goles)
+        // Inputs de Inicio
         cfgStartMinute: document.getElementById('cfgStartMinute'),
         cfgStartLocal: document.getElementById('cfgStartLocal'),
         cfgStartVisit: document.getElementById('cfgStartVisit'),
@@ -128,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- 2. EVENTOS DE ESTILO (Colores y Textos) ---
+    // --- EVENTOS DE ESTILO ---
     const root = document.documentElement;
     const updateCssVar = (variable, value) => root.style.setProperty(variable, value);
     updateCssVar('--strip-radius', '0px');
@@ -145,9 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(els.visitNameInput) els.visitNameInput.addEventListener('input', (e) => els.visitName.innerText = e.target.value || "VISIT");
     
 
-    // =========================================================
-    // --- NUEVO: LÓGICA DE MINUTO Y MARCADOR INICIAL ---
-    // =========================================================
+    // --- LÓGICA DE MINUTO Y MARCADOR INICIAL ---
     const updateInitialScore = () => {
         const loc = els.cfgStartLocal ? els.cfgStartLocal.value : 0;
         const vis = els.cfgStartVisit ? els.cfgStartVisit.value : 0;
@@ -156,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateLiveTime = () => {
         const startMin = els.cfgStartMinute ? parseInt(els.cfgStartMinute.value || 0, 10) : 0;
-        // Si hay un video, sumamos sus segundos de reproducción
         const currentSeconds = els.videoPlayer && !els.videoPlayer.paused ? els.videoPlayer.currentTime : 0;
         
         const totalSeconds = (startMin * 60) + currentSeconds;
@@ -166,21 +162,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (els.previewTime) els.previewTime.innerText = `${m}:${s}`;
     };
 
-    // Escuchadores de las cajas del HTML
     if (els.cfgStartLocal) els.cfgStartLocal.addEventListener('input', updateInitialScore);
     if (els.cfgStartVisit) els.cfgStartVisit.addEventListener('input', updateInitialScore);
     if (els.cfgStartMinute) els.cfgStartMinute.addEventListener('input', updateLiveTime);
 
-    // Escuchador del reloj del video en vivo
     if (els.videoPlayer) {
         els.videoPlayer.addEventListener('timeupdate', updateLiveTime);
         els.videoPlayer.addEventListener('loadeddata', updateLiveTime);
         els.videoPlayer.addEventListener('seeked', updateLiveTime);
     }
-    // =========================================================
 
 
-    // --- 3. TOGGLE LIGA Y ESTILOS ESCUDO ---
+    // --- LIGA Y ESCUDO ---
     const updateBadgeStyle = (select, container) => {
         if (!select || !container) return;
         select.value === 'split' ? container.classList.add('style-split') : container.classList.remove('style-split');
@@ -195,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(els.chkShowLiga) els.chkShowLiga.addEventListener('change', toggleLigaBox);
     toggleLigaBox(); 
 
-    // --- 4. GESTIÓN DE IMÁGENES ---
+    // --- GESTIÓN DE IMÁGENES ---
     const setupImageControl = (input, btnDelete, label, imgPreview, stripElement, defaultLabel, placeholderElement) => {
         if(!input) return;
         input.addEventListener('change', function() {
@@ -228,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupImageControl(els.imgVisitInput, els.btnDelVisit, els.labelImgVisit, els.previewLogoVisit, els.stripsVisit, "🛡️ Subir", null);
     setupImageControl(els.imgLigaInput, els.btnDelLiga, els.labelImgLiga, els.previewLogoLiga, null, "🖼️ Imagen", els.ligaPlaceholder);
 
-    // --- 5. LÓGICA DEL MODAL ---
+    // --- LÓGICA DEL MODAL ---
     const openModal = () => els.modal.classList.remove('hidden');
     const closeModal = () => els.modal.classList.add('hidden');
 
@@ -239,12 +232,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === els.modal) closeModal();
     });
 
-    // --- 6. CAMBIO DE RESOLUCIÓN ---
+    // --- CAMBIO DE RESOLUCIÓN ---
     if(els.resolutionSelect) {
         els.resolutionSelect.addEventListener('change', updateEstimatedTime);
     }
 
-    // --- 7. CARGA DE VIDEO ---
+    // --- CARGA DE VIDEO ---
     if(els.videoInput) {
         els.videoInput.addEventListener('change', function(){
             const file = this.files[0];
@@ -264,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 8. CARGA DE TXT ---
+    // --- CARGA DE TXT ---
     if(els.eventsInput) {
         els.eventsInput.addEventListener('change', function(){
             const file = this.files[0];
@@ -276,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 9. RENDERIZADO ---
+    // --- RENDERIZADO ---
     if(els.btnRender) {
         els.btnRender.addEventListener('click', () => { 
             let hasError = false;
@@ -322,8 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('loc_s2', els.cfgLocStrip2.value);
             formData.append('vis_s1', els.cfgVisStrip1.value);
             formData.append('vis_s2', els.cfgVisStrip2.value);
-            
-            // NUEVOS DATOS AÑADIDOS
             formData.append("start_minute", els.cfgStartMinute ? els.cfgStartMinute.value : "0");
             formData.append("start_score_local", els.cfgStartLocal ? els.cfgStartLocal.value : "0");
             formData.append("start_score_visit", els.cfgStartVisit ? els.cfgStartVisit.value : "0");
@@ -335,8 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Calidad
             formData.append('output_quality', els.resolutionSelect.value);
 
-            // Enviar AJAX
-// Enviar AJAX
             const xhr = new XMLHttpRequest();
             xhr.open('POST', '/render', true);
             xhr.responseType = 'blob'; 
@@ -348,14 +337,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const percentComplete = Math.round((e.loaded / e.total) * 100);
                     
                     if (percentComplete < 100) {
-                        // 1. FASE DE SUBIDA (0% a 100% real de los archivos)
                         els.progressBar.style.width = percentComplete + "%";
                         els.progressText.innerText = percentComplete + "%";
                         els.progressStatus.innerText = "Subiendo archivos...";
                     } else {
-                        // 2. FASE DE RENDERIZADO (El progreso simulado inteligente)
                         if (!renderInterval) {
-                            els.progressBar.style.width = "0%"; // Reiniciamos la barra
+                            els.progressBar.style.width = "0%"; 
                             els.progressText.innerText = "0%";
                             els.progressStatus.innerText = "🎥 Procesando video...";
                             
@@ -364,13 +351,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             const factor = qualityFactors[els.resolutionSelect.value] || 0.6;
                             let estimatedSecs = videoDurationSeconds * factor;
                             
-                            // Si por algún motivo no hay tiempo, ponemos 30 seg por defecto
                             if (estimatedSecs <= 0 || isNaN(estimatedSecs)) estimatedSecs = 30; 
 
                             let currentFakeProgress = 0;
-                            const maxFakeProgress = 95; // Paramos en 95% hasta que termine de verdad
+                            const maxFakeProgress = 95; 
                             
-                            // Calculamos cuánto tiene que avanzar la barra cada segundo
                             const stepPerSecond = maxFakeProgress / estimatedSecs;
 
                             renderInterval = setInterval(() => {
@@ -384,14 +369,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 
                                 els.progressBar.style.width = currentFakeProgress + "%";
                                 els.progressText.innerText = Math.round(currentFakeProgress) + "%";
-                            }, 1000); // Se actualiza cada 1 segundo (1000 ms)
+                            }, 1000); 
                         }
                     }
                 }
             };
 
             xhr.onload = function() {
-                // Detenemos la animación falsa de progreso
                 if (renderInterval) clearInterval(renderInterval);
                 
                 if (xhr.status === 200) {
@@ -405,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     a.remove();
                     window.URL.revokeObjectURL(url);
                     
-                    // 3. FASE DE COMPLETADO (Forzamos al 100%)
                     els.progressStatus.innerText = "✅ ¡Listo!";
                     els.progressBar.classList.remove('processing');
                     els.progressBar.style.width = "100%";

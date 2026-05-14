@@ -5,7 +5,7 @@ def render(video_path, events, config, output_path):
     print("🚀 Iniciando Renderizado (Versión Final: Minuto y Marcador Personalizado)...")
 
     # -------------------------------------------------------------------------
-    # 1. EXTRACCIÓN DE CONFIGURACIÓN
+    # EXTRACCIÓN DE CONFIGURACIÓN
     # -------------------------------------------------------------------------
     main_bg = config.get("main_bg", "#1E90FF")
     info_bg = config.get("info_bg", "#FFFFFF")
@@ -31,7 +31,6 @@ def render(video_path, events, config, output_path):
     has_loc_logo  = logo_local_path and os.path.exists(logo_local_path)
     has_vis_logo  = logo_visit_path and os.path.exists(logo_visit_path)
 
-    # --- NUEVOS DATOS DE INICIO ---
     start_minute = int(config.get("start_minute", 0))
     start_score_local = int(config.get("start_score_local", 0))
     start_score_visit = int(config.get("start_score_visit", 0))
@@ -50,7 +49,7 @@ def render(video_path, events, config, output_path):
     banner_bg_color = get_lavfi_color(info_bg) 
 
     # -------------------------------------------------------------------------
-    # 2. FUENTES Y GEOMETRÍA
+    # FUENTES Y GEOMETRÍA
     # -------------------------------------------------------------------------
     font_bold = "arial.ttf"
     possible_fonts = ["Inter-ExtraBold.ttf", "Inter-Bold.ttf", "Inter.ttf", "arial.ttf", 
@@ -89,7 +88,7 @@ def render(video_path, events, config, output_path):
     W_SCORE = int(60 * S)
 
     # -------------------------------------------------------------------------
-    # 3. CÁLCULO DE POSICIONES
+    # CÁLCULO DE POSICIONES
     # -------------------------------------------------------------------------
     GAP_LIGA_TIME = 0 
 
@@ -107,14 +106,14 @@ def render(video_path, events, config, output_path):
     x_vis   = int(x_score + W_SCORE)
 
     # -------------------------------------------------------------------------
-    # 4. CONSTRUCCIÓN DE FLUJO FFMPEG
+    # CONSTRUCCIÓN DE FLUJO FFMPEG
     # -------------------------------------------------------------------------
     input_file = ffmpeg.input(video_path)
     audio_stream = input_file.audio
     stream = input_file['v']
 
     # =========================================================================
-    # CAPA 1: SOMBRA DEL MARCADOR (FONDO)
+    # CAPA 1: SOMBRA DEL MARCADOR
     # =========================================================================
     shadow_offset = int(4 * S)
     end_x = x_vis + W_TEAM
@@ -129,16 +128,12 @@ def render(video_path, events, config, output_path):
     # =========================================================================
     sorted_events = sorted(events, key=lambda x: x['time'])
     
-    # ---------------------------------------------------------
-    # 🎛️ AJUSTES FINOS DEL BANNER
-    # ---------------------------------------------------------
     BANNER_DURATION = 5.0     
     ANIM_DURATION = 0.6
     W_BANNER = int(100 * S) 
     
     Y_BANNER = int(Y_POS + 1)
     H_BANNER = int(H_BAR - 1)
-    # ---------------------------------------------------------
 
     X_VISIBLE = x_vis + W_TEAM          
     X_HIDDEN = X_VISIBLE - W_BANNER     
@@ -199,7 +194,7 @@ def render(video_path, events, config, output_path):
     stream = stream.filter('drawbox', x=x_score, y=Y_POS, w=W_SCORE, h=H_BAR, color=f"{info_bg}@1", t='fill')
     stream = stream.filter('drawbox', x=x_vis, y=Y_POS, w=W_TEAM, h=H_BAR, color=f"{main_bg}@1", t='fill')
 
-    # D. INSIGNIAS / FRANJAS
+    # INSIGNIAS / FRANJAS
     strip_h = int(16 * S)
     strip_y = int(Y_POS + (H_BAR - strip_h) / 2)
     space_WITH_logo = int(23 * S)
@@ -249,7 +244,7 @@ def render(video_path, events, config, output_path):
     else:
         strip_w_vis_actual = 0
 
-    # E. TEXTOS Y RELOJ
+    # TEXTOS Y RELOJ
     txt_x_loc = int(x_strip_loc + strip_w_loc + (6 * S))
     stream = stream.drawtext(fontfile=font_bold, text=local_name, x=txt_x_loc, 
                              y=f"{Y_POS}+({H_BAR}-th)/2", fontsize=fs_main, fontcolor=text_color)
@@ -261,7 +256,6 @@ def render(video_path, events, config, output_path):
     stream = stream.drawtext(fontfile=font_bold, text=visit_name, x=f"{txt_x_vis}-tw", 
                              y=f"{Y_POS}+({H_BAR}-th)/2", fontsize=fs_main, fontcolor=text_color)
 
-    # RECURSO CLAVE: SUMAR LOS SEGUNDOS DEL MINUTO INICIAL AL RELOJ
     offset_seconds = start_minute * 60
     time_str = f"%{{pts:gmtime:{offset_seconds}:%M\\:%S}}"
     stream = stream.drawtext(fontfile=font_bold, text=time_str, x=f"{x_time}+({W_TIME}-tw)/2", 
@@ -271,7 +265,7 @@ def render(video_path, events, config, output_path):
         stream = stream.drawtext(fontfile=font_bold, text="TV", x=f"{x_liga}+({W_LIGA}-tw)/2", 
                                  y=f"{Y_POS}+({H_BAR}-th)/2", fontsize=fs_main, fontcolor="#999999")
 
-    # F. MARCADOR (GOLES CON VARIABLES INICIALES)
+    # MARCADOR 
     current_loc = start_score_local
     current_vis = start_score_visit
     last_time = 0
@@ -293,7 +287,7 @@ def render(video_path, events, config, output_path):
         stream = stream.drawtext(fontfile=font_bold, text=final_score, enable=f"gte(t,{last_time})", 
                                  x=f"{x_score}+({W_SCORE}-tw)/2", y=f"{Y_POS}+({H_BAR}-th)/2", fontsize=fs_main, fontcolor=text_color)
 
-    # G. LOGOS SUPERPUESTOS
+    # LOGOS SUPERPUESTOS
     logo_target_h = int(20 * S) 
     logo_y = int(Y_POS + (H_BAR - logo_target_h) / 2)
 

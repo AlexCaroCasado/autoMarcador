@@ -33,6 +33,7 @@ Esta es la vía más rápida y segura, ya que el contenedor incluye FFmpeg prein
 docker build -t automarcador .
 docker run -p 8000:8000 automarcador
 ```
+Abre tu navegador en `http://localhost:8000`
 
 ### Opción B: Entorno Local (Python)
 

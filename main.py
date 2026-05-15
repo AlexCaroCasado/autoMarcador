@@ -145,7 +145,7 @@ async def render_video(
     temp_files_to_delete = []
 
     temp_video_path = os.path.join(UPLOAD_DIR, f"{job_id}_input.mp4")
-    output_path = os.path.join(OUTPUT_DIR, f"Resumen_{job_id}.mp4")
+    output_path = os.path.join(OUTPUT_DIR, f"Partido_{job_id}.mp4")
     
     temp_files_to_delete.append(temp_video_path)
     temp_files_to_delete.append(output_path)
@@ -213,7 +213,7 @@ async def render_video(
         return FileResponse(
             output_path, 
             media_type="video/mp4", 
-            filename=f"Resumen_{local_name}_vs_{visit_name}_{output_quality}p.mp4"
+            filename=f"Partido_{local_name}_vs_{visit_name}_{output_quality}p.mp4"
         )
 
     except Exception as e:
